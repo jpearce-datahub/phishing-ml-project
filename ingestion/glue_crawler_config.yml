@@ -1,0 +1,37 @@
+# AWS Glue Crawler Configuration
+# This config defines how Glue should crawl the S3 bucket and create tables in Athena
+
+CrawlerName: phishing-ml-events-crawler
+Role: arn:aws:iam::ACCOUNT_ID:role/GlueServiceRole
+DatabaseName: phishing_ml_db
+Targets:
+  S3Targets:
+    - Path: s3://org-product-logs/raw/
+      Exclusions:
+        - "**/_SUCCESS"
+        - "**/.*"
+SchemaChangePolicy:
+  UpdateBehavior: UPDATE_IN_DATABASE
+  DeleteBehavior: LOG
+RecrawlPolicy:
+  RecrawlBehavior: CRAWL_EVERYTHING
+Configuration: |
+  {
+    "Version": 1.0,
+    "CrawlerOutput": {
+      "Partitions": {
+        "AddOrUpdateBehavior": "InheritFromTable"
+      },
+      "Tables": {
+        "AddOrUpdateBehavior": "MergeNewColumns"
+      }
+    },
+    "Grouping": {
+      "TableGroupingPolicy": "CombineCompatibleSchemas"
+    }
+  }
+TablePrefix: events_
+SchemaChangePolicy:
+  UpdateBehavior: UPDATE_IN_DATABASE
+  DeleteBehavior: LOG
+

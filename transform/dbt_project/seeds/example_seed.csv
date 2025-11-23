@@ -1,0 +1,8 @@
+department,region,risk_weight
+Engineering,US-East,1.0
+Sales,US-East,1.2
+Marketing,US-East,1.1
+HR,US-West,0.9
+Finance,EU,1.0
+Operations,APAC,1.1
+

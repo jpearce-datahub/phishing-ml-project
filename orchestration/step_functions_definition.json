@@ -1,0 +1,158 @@
+{
+  "Comment": "Phishing ML Pipeline - AWS Step Functions State Machine",
+  "StartAt": "ProcessRawData",
+  "States": {
+    "ProcessRawData": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:ACCOUNT_ID:function:process-raw-data",
+      "Next": "RunGlueCrawler",
+      "Retry": [
+        {
+          "ErrorEquals": ["States.TaskFailed"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ]
+    },
+    "RunGlueCrawler": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startCrawler.sync",
+      "Parameters": {
+        "CrawlerName": "phishing-ml-events-crawler"
+      },
+      "Next": "RunDbtTransformations",
+      "Retry": [
+        {
+          "ErrorEquals": ["States.TaskFailed"],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 2
+        }
+      ]
+    },
+    "RunDbtTransformations": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:ACCOUNT_ID:function:run-dbt-transform",
+      "Parameters": {
+        "dbt_command": "dbt run",
+        "dbt_project_path": "s3://org-product-logs/dbt-project/"
+      },
+      "Next": "RunDbtTests",
+      "Retry": [
+        {
+          "ErrorEquals": ["States.TaskFailed"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 2
+        }
+      ]
+    },
+    "RunDbtTests": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:ACCOUNT_ID:function:run-dbt-transform",
+      "Parameters": {
+        "dbt_command": "dbt test",
+        "dbt_project_path": "s3://org-product-logs/dbt-project/"
+      },
+      "Next": "CheckTestResults",
+      "Retry": [
+        {
+          "ErrorEquals": ["States.TaskFailed"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 2
+        }
+      ]
+    },
+    "CheckTestResults": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.test_status",
+          "StringEquals": "passed",
+          "Next": "TrainMLModel"
+        }
+      ],
+      "Default": "NotifyFailure"
+    },
+    "TrainMLModel": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sagemaker:createTrainingJob.sync",
+      "Parameters": {
+        "TrainingJobName": "phishing-detection-$(Execution.StartTime)",
+        "RoleArn": "arn:aws:iam::ACCOUNT_ID:role/SageMakerExecutionRole",
+        "AlgorithmSpecification": {
+          "TrainingImage": "763104351884.dkr.ecr.us-east-1.amazonaws.com/sklearn-training:1.0-1-cpu",
+          "TrainingInputMode": "File"
+        },
+        "InputDataConfig": [
+          {
+            "ChannelName": "training",
+            "DataSource": {
+              "S3DataSource": {
+                "S3DataType": "S3Prefix",
+                "S3Uri": "s3://org-product-logs-ml-models/processed/train/",
+                "S3DataDistributionType": "FullyReplicated"
+              }
+            }
+          }
+        ],
+        "OutputDataConfig": {
+          "S3OutputPath": "s3://org-product-logs-ml-models/models/"
+        },
+        "ResourceConfig": {
+          "InstanceType": "ml.m5.xlarge",
+          "InstanceCount": 1,
+          "VolumeSizeInGB": 30
+        },
+        "StoppingCondition": {
+          "MaxRuntimeInSeconds": 3600
+        },
+        "HyperParameters": {
+          "n_estimators": "100",
+          "max_depth": "20",
+          "min_samples_split": "5"
+        }
+      },
+      "Next": "UpdateMetricsTables",
+      "Retry": [
+        {
+          "ErrorEquals": ["States.TaskFailed"],
+          "IntervalSeconds": 10,
+          "MaxAttempts": 2
+        }
+      ]
+    },
+    "UpdateMetricsTables": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:ACCOUNT_ID:function:update-metrics-tables",
+      "Next": "NotifySuccess",
+      "Retry": [
+        {
+          "ErrorEquals": ["States.TaskFailed"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3
+        }
+      ]
+    },
+    "NotifySuccess": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:us-east-1:ACCOUNT_ID:pipeline-notifications",
+        "Message": "Pipeline completed successfully",
+        "Subject": "Phishing ML Pipeline - Success"
+      },
+      "End": true
+    },
+    "NotifyFailure": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:us-east-1:ACCOUNT_ID:pipeline-notifications",
+        "Message": "Pipeline failed. Check logs for details.",
+        "Subject": "Phishing ML Pipeline - Failure"
+      },
+      "End": true
+    }
+  }
+}
+

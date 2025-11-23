@@ -1,0 +1,61 @@
+version: 2
+
+models:
+  - name: stg_events
+    description: "Staging model for raw event data from S3/Athena"
+    columns:
+      - name: event_id
+        description: "Unique event identifier"
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: "User identifier"
+        tests:
+          - not_null
+      - name: timestamp
+        description: "Event timestamp"
+        tests:
+          - not_null
+      - name: event_type
+        description: "Type of event (threat_detected, legitimate_url)"
+      - name: is_phishing
+        description: "Binary indicator: 1 for phishing, 0 for legitimate"
+        tests:
+          - accepted_values:
+              values: [0, 1]
+      - name: threat_id
+        description: "Threat identifier"
+  
+  - name: stg_users
+    description: "Staging model for user dimension data"
+    columns:
+      - name: user_id
+        description: "Unique user identifier"
+        tests:
+          - unique
+          - not_null
+      - name: department
+        description: "User department"
+      - name: region
+        description: "User region"
+      - name: role
+        description: "User role"
+
+  - name: stg_threat_features
+    description: "Staging model for threat feature data"
+    columns:
+      - name: threat_id
+        description: "Threat identifier"
+        tests:
+          - unique
+          - not_null
+      - name: url_length
+        description: "URL length in characters"
+      - name: num_dots
+        description: "Number of dots in URL"
+      - name: has_https
+        description: "HTTPS indicator"
+      - name: has_ip_address
+        description: "IP address in URL indicator"
+

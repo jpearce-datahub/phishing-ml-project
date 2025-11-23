@@ -1,0 +1,71 @@
+# SageMaker Pipeline Configuration
+# Defines the ML training pipeline for AWS SageMaker
+
+pipeline_name: phishing-detection-pipeline
+pipeline_description: "Phishing detection model training pipeline"
+
+steps:
+  - name: data_preparation
+    type: ProcessingStep
+    processor:
+      image_uri: "763104351884.dkr.ecr.us-east-1.amazonaws.com/sklearn-processing:1.0-1-cpu"
+      instance_type: ml.m5.xlarge
+      instance_count: 1
+    code: s3://org-product-logs-ml-models/code/preprocess.py
+    inputs:
+      - source: s3://org-product-logs/raw/
+        destination: /opt/ml/processing/input
+    outputs:
+      - source: /opt/ml/processing/train
+        destination: s3://org-product-logs-ml-models/processed/train/
+      - source: /opt/ml/processing/validation
+        destination: s3://org-product-logs-ml-models/processed/validation/
+      - source: /opt/ml/processing/test
+        destination: s3://org-product-logs-ml-models/processed/test/
+
+  - name: model_training
+    type: TrainingStep
+    depends_on: data_preparation
+    estimator:
+      image_uri: "763104351884.dkr.ecr.us-east-1.amazonaws.com/sklearn-training:1.0-1-cpu"
+      instance_type: ml.m5.xlarge
+      instance_count: 1
+      hyperparameters:
+        n_estimators: 100
+        max_depth: 20
+        min_samples_split: 5
+    code: s3://org-product-logs-ml-models/code/train.py
+    inputs:
+      training: s3://org-product-logs-ml-models/processed/train/
+    outputs:
+      model: s3://org-product-logs-ml-models/models/
+
+  - name: model_evaluation
+    type: ProcessingStep
+    depends_on: model_training
+    processor:
+      image_uri: "763104351884.dkr.ecr.us-east-1.amazonaws.com/sklearn-processing:1.0-1-cpu"
+      instance_type: ml.m5.xlarge
+      instance_count: 1
+    code: s3://org-product-logs-ml-models/code/evaluate.py
+    inputs:
+      - source: s3://org-product-logs-ml-models/models/
+        destination: /opt/ml/processing/model
+      - source: s3://org-product-logs-ml-models/processed/test/
+        destination: /opt/ml/processing/test
+    outputs:
+      - source: /opt/ml/processing/evaluation
+        destination: s3://org-product-logs-ml-models/evaluation/
+
+  - name: model_registration
+    type: ModelStep
+    depends_on: model_evaluation
+    model:
+      model_data: s3://org-product-logs-ml-models/models/
+      image_uri: "763104351884.dkr.ecr.us-east-1.amazonaws.com/sklearn-inference:1.0-1-cpu"
+    model_package_group_name: phishing-detection-models
+
+schedule:
+  expression: "cron(0 2 * * ? *)"  # Daily at 2 AM UTC
+  enabled: true
+

@@ -1,0 +1,27 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "Raw data sources from S3/Athena"
+    schema: raw
+    tables:
+      - name: events
+        description: "Raw event data from S3 JSON files"
+        columns:
+          - name: event_id
+            description: "Unique event identifier"
+          - name: user_id
+            description: "User identifier"
+          - name: timestamp
+            description: "Event timestamp"
+          - name: event_type
+            description: "Type of event"
+          - name: threat_id
+            description: "Threat identifier"
+          - name: is_phishing
+            description: "Phishing indicator"
+          - name: metadata
+            description: "JSON metadata object"
+          - name: user_metadata
+            description: "JSON user metadata object"
+
