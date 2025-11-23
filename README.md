@@ -130,10 +130,6 @@ python evaluate.py
 - Comprehensive data quality tests
 - Automated pipeline orchestration
 
-## Author
-
-Built as a portfolio project demonstrating analytics engineering capabilities.
-
 ## License
 
 MIT License
