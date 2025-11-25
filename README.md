@@ -47,21 +47,6 @@ phishing-ml/
 - **Feature Importance**: Top indicators of phishing URLs
 - **Threat Severity Distribution**: Breakdown by threat characteristics
 
-## Testing
-
-```bash
-# Run dbt tests
-cd transform/dbt_project
-dbt test
-
-# Run API tests
-cd api
-pytest tests/
-
-# Run ML model evaluation
-cd ml
-python evaluate.py
-```
 
 ## Documentation
 
