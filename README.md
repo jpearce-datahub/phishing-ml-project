@@ -1,10 +1,6 @@
-# Product Threat-Intelligence Metrics Platform
-
-A comprehensive, production-ready analytics engineering project demonstrating end-to-end data pipeline capabilities from ingestion to ML to dashboards.
-
 ## Project Overview
 
-This platform ingests phishing threat intelligence data, transforms it through a dimensional model, trains ML models for threat detection, and exposes metrics through APIs and dashboards. Built to mirror real-world security SaaS analytics engineering workflows.
+This platform ingests phishing threat intelligence data, transforms it through a dimensional model, trains ML models for threat detection, and exposes metrics through APIs and dashboards. 
 
 ## Architecture
 
