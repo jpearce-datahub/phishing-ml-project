@@ -37,47 +37,7 @@ phishing-ml/
 └── Phishing_Legitimate_full.csv  # Source dataset
 ```
 
-## Quick Start
 
-### Prerequisites
-
-- Python 3.8+
-- Docker & Docker Compose
-- AWS CLI configured (for cloud deployment)
-- dbt-core
-- PostgreSQL or Athena (for data warehouse)
-
-### Local Setup
-
-1. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Ingest data:**
-   ```bash
-   cd ingestion
-   python process_dataset.py
-   ```
-
-3. **Run dbt transformations:**
-   ```bash
-   cd transform/dbt_project
-   dbt run
-   dbt test
-   ```
-
-4. **Start API service:**
-   ```bash
-   cd api
-   docker-compose up
-   ```
-
-5. **Train ML model:**
-   ```bash
-   cd ml
-   python train.py
-   ```
 
 ## Key Metrics
 
