@@ -1,6 +1,6 @@
 ## Project Overview
 
-This platform ingests phishing threat intelligence data, transforms it through a dimensional model, trains ML models for threat detection, and exposes metrics through APIs and dashboards. 
+Ingest phishing threat intelligence data, transform it through a dimensional model, trains ML models for threat detection, and eventually expose metrics through APIs and dashboards. 
 
 ## Architecture
 
