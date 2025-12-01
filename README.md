@@ -1,10 +1,6 @@
-# Product Threat-Intelligence Metrics Platform
-
-A comprehensive, production-ready analytics engineering project demonstrating end-to-end data pipeline capabilities from ingestion to ML to dashboards.
-
 ## Project Overview
 
-This platform ingests phishing threat intelligence data, transforms it through a dimensional model, trains ML models for threat detection, and exposes metrics through APIs and dashboards. Built to mirror real-world security SaaS analytics engineering workflows.
+Ingest phishing threat intelligence data, transform it through a dimensional model, trains ML models for threat detection, and eventually expose metrics through APIs and dashboards. 
 
 ## Architecture
 
@@ -37,47 +33,7 @@ phishing-ml/
 └── Phishing_Legitimate_full.csv  # Source dataset
 ```
 
-## Quick Start
 
-### Prerequisites
-
-- Python 3.8+
-- Docker & Docker Compose
-- AWS CLI configured (for cloud deployment)
-- dbt-core
-- PostgreSQL or Athena (for data warehouse)
-
-### Local Setup
-
-1. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Ingest data:**
-   ```bash
-   cd ingestion
-   python process_dataset.py
-   ```
-
-3. **Run dbt transformations:**
-   ```bash
-   cd transform/dbt_project
-   dbt run
-   dbt test
-   ```
-
-4. **Start API service:**
-   ```bash
-   cd api
-   docker-compose up
-   ```
-
-5. **Train ML model:**
-   ```bash
-   cd ml
-   python train.py
-   ```
 
 ## Key Metrics
 
@@ -87,21 +43,6 @@ phishing-ml/
 - **Feature Importance**: Top indicators of phishing URLs
 - **Threat Severity Distribution**: Breakdown by threat characteristics
 
-## Testing
-
-```bash
-# Run dbt tests
-cd transform/dbt_project
-dbt test
-
-# Run API tests
-cd api
-pytest tests/
-
-# Run ML model evaluation
-cd ml
-python evaluate.py
-```
 
 ## Documentation
 
@@ -130,10 +71,4 @@ python evaluate.py
 - Comprehensive data quality tests
 - Automated pipeline orchestration
 
-## Author
 
-Built as a portfolio project demonstrating analytics engineering capabilities.
-
-## License
-
-MIT License
