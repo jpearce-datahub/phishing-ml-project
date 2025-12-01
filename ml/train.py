@@ -12,8 +12,8 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 import joblib
 import os
 from pathlib import Path
-import boto3
 from datetime import datetime
+# import boto3  # Commented out for local training
 
 # Configuration
 MODEL_DIR = Path(__file__).parent / "models"
@@ -124,22 +124,9 @@ def save_model(model, metrics, feature_names, feature_importance):
 
 def upload_to_s3(model_path, metadata_path):
     """Upload model to S3 (optional, for SageMaker)."""
-    try:
-        s3_client = boto3.client('s3')
-        
-        model_key = f"models/{model_path.name}"
-        metadata_key = f"models/{metadata_path.name}"
-        
-        s3_client.upload_file(str(model_path), S3_MODEL_BUCKET, model_key)
-        s3_client.upload_file(str(metadata_path), S3_MODEL_BUCKET, metadata_key)
-        
-        print(f"\nModel uploaded to S3:")
-        print(f"  s3://{S3_MODEL_BUCKET}/{model_key}")
-        print(f"  s3://{S3_MODEL_BUCKET}/{metadata_key}")
-        
-    except Exception as e:
-        print(f"\nWarning: Could not upload to S3: {e}")
-        print("Continuing with local model only...")
+    print(f"\nSkipping S3 upload (running locally)")
+    print(f"Model saved locally at: {model_path}")
+    print(f"Metadata saved locally at: {metadata_path}")
 
 def main():
     """Main training function."""

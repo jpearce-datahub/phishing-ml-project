@@ -1,74 +1,135 @@
-## Project Overview
+# Phishing ML Project
 
-Ingest phishing threat intelligence data, transform it through a dimensional model, trains ML models for threat detection, and eventually expose metrics through APIs and dashboards. 
+A comprehensive machine learning project for phishing detection using URL features and threat intelligence metrics.
+
+## Overview
+
+This project implements an end-to-end machine learning pipeline for detecting phishing URLs. It includes data ingestion, feature engineering, model training, inference, and a REST API for real-time predictions.
 
 ## Architecture
 
 ```
-CSV Dataset -> S3 -> AWS Glue Crawler -> Athena External Tables
-                    |
-              dbt (Core)
-                    |
-        Dimensional Model in Athena (ELT)
-                    |
-       ML Training Pipeline (SageMaker)
-                    |
-         API Layer (FastAPI in Docker)
-                    |
-    Dashboard (PowerBI / Looker / Quicksight)
+CSV Dataset -> Feature Engineering -> ML Training -> Model Serving
+                                          |
+                                    FastAPI Service
+                                          |
+                              Real-time Predictions
 ```
 
 ## Project Structure
 
 ```
 phishing-ml/
-├── ingestion/              # Data ingestion scripts
-├── transform/              # dbt project
-│   └── dbt_project/
-├── orchestration/          # Pipeline orchestration configs
-├── ml/                     # ML training and inference
 ├── api/                    # FastAPI service
-├── bi/                     # Dashboard files
-├── docs/                   # Documentation
-└── Phishing_Legitimate_full.csv  # Source dataset
+│   ├── app.py             # Main API application
+│   ├── tests/             # API tests
+│   ├── Dockerfile         # Container configuration
+│   └── requirements.txt   # API dependencies
+├── ml/                    # Machine learning components
+│   ├── train.py          # Model training script
+│   ├── inference.py      # Prediction script
+│   ├── evaluate.py       # Model evaluation
+│   └── models/           # Saved models (gitignored)
+├── transform/            # dbt data transformations
+│   └── dbt_project/      # dbt models and configurations
+├── orchestration/        # Workflow management
+│   ├── airflow_dag.py    # Airflow workflow
+│   └── step_functions_definition.json
+├── ingestion/           # Data ingestion scripts
+│   ├── upload_to_s3.py  # S3 upload utility
+│   └── process_dataset.py # Data preprocessing
+├── docs/                # Documentation
+└── Phishing_Legitimate_full.csv  # Training dataset
 ```
 
+## Model Performance
 
+- **Algorithm**: Random Forest Classifier
+- **Training Accuracy**: 98.19%
+- **Test Accuracy**: 98.30%
+- **F1 Score**: 98.30%
+- **Features**: 48 URL-based features
+- **Dataset**: 10,000 labeled URLs
 
-## Key Metrics
+## Key Features Analyzed
 
-- **Threat Detection Rate**: Percentage of phishing URLs correctly identified
-- **False Positive Rate**: Legitimate URLs incorrectly flagged
-- **Model Accuracy**: Overall ML model performance
-- **Feature Importance**: Top indicators of phishing URLs
-- **Threat Severity Distribution**: Breakdown by threat characteristics
+1. **PctExtHyperlinks** (23.78% importance)
+2. **PctExtNullSelfRedirectHyperlinksRT** (9.77% importance)
+3. **FrequentDomainNameMismatch** (9.11% importance)
+4. **PctExtResourceUrls** (8.91% importance)
+5. **PctNullSelfRedirectHyperlinks** (7.02% importance)
 
+## API Endpoints
 
-## Documentation
+- `GET /health` - System health check
+- `POST /predict` - Real-time phishing detection
+- `GET /metrics/threat-block-rate` - Threat blocking metrics
+- `GET /metrics/product-efficacy` - Product efficacy scores
+- `GET /metrics/user/{user_id}` - User-specific metrics
+- `GET /model/info` - Model information and feature importance
 
-- [Architecture Documentation](docs/ARCHITECTURE.md)
-- [dbt Model Documentation](transform/dbt_project/docs/)
-- [API Documentation](api/README.md)
-- [ML Model Documentation](ml/README.md)
+## Installation
+
+1. Clone the repository
+2. Install dependencies: `pip install -r requirements.txt`
+3. Train the model: `python ml/train.py`
+4. Start the API: `python api/app.py`
+
+## Usage
+
+### Training a Model
+
+```bash
+cd ml
+python train.py
+```
+
+### Running Inference
+
+```bash
+cd ml
+python inference.py input_file.csv output_file.csv
+```
+
+### Starting the API
+
+```bash
+cd api
+python app.py
+```
+
+The API will be available at `http://localhost:8000`
+
+## Docker Support
+
+Build and run the API container:
+
+```bash
+cd api
+docker build -t phishing-api .
+docker run -p 8000:8000 phishing-api
+```
 
 ## Technologies
 
-- **Data Warehouse**: AWS Athena / PostgreSQL
-- **Transformation**: dbt-core
-- **ML Framework**: Scikit-learn, SageMaker
+- **ML Framework**: Scikit-learn
 - **API**: FastAPI
+- **Data Processing**: Pandas, NumPy
 - **Containerization**: Docker
-- **Orchestration**: AWS Step Functions / Airflow
-- **BI Tools**: PowerBI / Looker / Quicksight
+- **Orchestration**: Airflow, AWS Step Functions
+- **Data Transformation**: dbt
 
 ## Features
 
-- Dimensional modeling with dbt
-- ML model training and inference
-- RESTful API for metrics access
-- Docker containerization
-- Cloud-native architecture (AWS)
-- Comprehensive data quality tests
-- Automated pipeline orchestration
+- Random Forest classifier with 98%+ accuracy
+- Real-time phishing detection API
+- Comprehensive feature engineering (48 URL-based features)
+- Scalable data pipeline architecture
+- Threat intelligence metrics and reporting
+- Docker containerization support
+
+## Contributing
+
+Contributions are welcome. Please ensure all tests pass and follow the existing code style.
 
 

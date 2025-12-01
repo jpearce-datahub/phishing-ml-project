@@ -30,25 +30,55 @@ except Exception as e:
     model = None
 
 class ThreatPredictionRequest(BaseModel):
-    """Request model for threat prediction."""
-    url_length: int
-    num_dots: int
-    subdomain_level: int
-    path_level: int
-    has_https: int
-    has_ip_address: int
-    num_sensitive_words: int
-    has_random_string: int
-    hostname_length: int
-    path_length: int
-    query_length: int
-    pct_ext_hyperlinks: float
-    pct_ext_resource_urls: float
-    abnormal_form_action: int
-    iframe_or_frame: int
-    missing_title: int
-    right_click_disabled: int
-    popup_window: int
+    """Request model for threat prediction - using actual dataset features."""
+    NumDots: int = 0
+    SubdomainLevel: int = 0
+    PathLevel: int = 0
+    UrlLength: int = 0
+    NumDash: int = 0
+    NumDashInHostname: int = 0
+    AtSymbol: int = 0
+    TildeSymbol: int = 0
+    NumUnderscore: int = 0
+    NumPercent: int = 0
+    NumQueryComponents: int = 0
+    NumAmpersand: int = 0
+    NumHash: int = 0
+    NumNumericChars: int = 0
+    NoHttps: int = 0
+    RandomString: int = 0
+    IpAddress: int = 0
+    DomainInSubdomains: int = 0
+    DomainInPaths: int = 0
+    HttpsInHostname: int = 0
+    HostnameLength: int = 0
+    PathLength: int = 0
+    QueryLength: int = 0
+    DoubleSlashInPath: int = 0
+    NumSensitiveWords: int = 0
+    EmbeddedBrandName: int = 0
+    PctExtHyperlinks: float = 0.0
+    PctExtResourceUrls: float = 0.0
+    ExtFavicon: int = 0
+    InsecureForms: int = 0
+    RelativeFormAction: int = 0
+    ExtFormAction: int = 0
+    AbnormalFormAction: int = 0
+    PctNullSelfRedirectHyperlinks: float = 0.0
+    FrequentDomainNameMismatch: int = 0
+    FakeLinkInStatusBar: int = 0
+    RightClickDisabled: int = 0
+    PopUpWindow: int = 0
+    SubmitInfoToEmail: int = 0
+    IframeOrFrame: int = 0
+    MissingTitle: int = 0
+    ImagesOnlyInForm: int = 0
+    SubdomainLevelRT: int = 0
+    UrlLengthRT: int = 0
+    PctExtResourceUrlsRT: float = 0.0
+    AbnormalExtFormActionR: int = 0
+    ExtMetaScriptLinkRT: int = 0
+    PctExtNullSelfRedirectHyperlinksRT: float = 0.0
 
 class ThreatPredictionResponse(BaseModel):
     """Response model for threat prediction."""

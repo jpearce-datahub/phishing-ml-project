@@ -1,105 +1,175 @@
-# dbt Transformation Layer
+# dbt Data Transformation Project
 
-This dbt project transforms raw event data into a dimensional model optimized for analytics and reporting.
+This dbt project transforms raw phishing threat intelligence data into a dimensional model for analytics and ML training.
+
+## Overview
+
+The dbt project implements a dimensional modeling approach with staging, marts, and metrics layers to support:
+- ML model training data preparation
+- Threat intelligence analytics
+- Business intelligence reporting
+- Data quality monitoring
 
 ## Project Structure
 
 ```
 dbt_project/
 ├── models/
-│   ├── staging/          # Staging models (views)
+│   ├── staging/           # Raw data cleaning and standardization
 │   │   ├── stg_events.sql
-│   │   ├── stg_users.sql
-│   │   └── stg_threat_features.sql
-│   └── marts/            # Dimensional models (tables)
-│       ├── dim_user.sql
+│   │   ├── stg_threat_features.sql
+│   │   └── stg_users.sql
+│   └── marts/            # Business logic and dimensional models
 │       ├── dim_threat.sql
+│       ├── dim_user.sql
 │       ├── fact_events.sql
 │       ├── fact_threat_matches.sql
-│       └── metrics/
-│           ├── threat_block_rate.sql
+│       └── metrics/      # Calculated metrics
 │           ├── phishing_report_rate.sql
-│           └── product_efficacy_score.sql
-├── tests/                # Custom data tests
-├── macros/               # Reusable SQL macros
-└── dbt_project.yml       # Project configuration
+│           ├── product_efficacy_score.sql
+│           └── threat_block_rate.sql
+├── macros/               # Reusable SQL functions
+├── tests/                # Data quality tests
+├── seeds/                # Static reference data
+└── docs/                 # Model documentation
 ```
 
-## Models
+## Data Models
 
 ### Staging Layer
 
-- **stg_events**: Cleans and standardizes raw event data
-- **stg_users**: Extracts user dimension data
-- **stg_threat_features**: Extracts threat feature data
+**stg_events**: Standardized event data from raw logs
+- Event deduplication and cleaning
+- Timestamp standardization
+- Data type conversions
 
-### Dimensional Models
+**stg_threat_features**: Processed threat feature data
+- Feature normalization
+- Missing value handling
+- Feature engineering transformations
 
-- **dim_user**: User dimension with aggregated metrics
-- **dim_threat**: Threat dimension with severity classification
-- **fact_events**: Fact table for event-level analysis
-- **fact_threat_matches**: Aggregated threat match statistics
+**stg_users**: User dimension staging
+- User attribute standardization
+- Department and region mapping
+
+### Marts Layer
+
+**dim_threat**: Threat dimension table
+- Threat categorization and severity
+- Feature aggregations
+- Threat intelligence enrichment
+
+**dim_user**: User dimension table
+- User demographics and attributes
+- Department and organizational hierarchy
+- Geographic information
+
+**fact_events**: Event fact table
+- Core event metrics and measures
+- Foreign keys to dimension tables
+- Aggregatable metrics
+
+**fact_threat_matches**: Threat detection fact table
+- ML model predictions and confidence scores
+- Threat classification results
+- Detection accuracy metrics
 
 ### Metrics Layer
 
-- **threat_block_rate**: Daily threat detection rates
-- **phishing_report_rate**: User-level phishing reporting metrics
-- **product_efficacy_score**: Overall product performance score
+**phishing_report_rate**: User reporting behavior metrics
+**product_efficacy_score**: Overall product performance scoring
+**threat_block_rate**: Threat blocking effectiveness metrics
+
+## Configuration
+
+### Profiles
+
+The project supports multiple target environments:
+- **dev**: Local development (PostgreSQL/DuckDB)
+- **staging**: Staging environment (Athena)
+- **prod**: Production environment (Athena)
+
+### Sources
+
+Data sources are configured in `models/sources.yml`:
+- Raw event logs
+- Threat intelligence feeds
+- User directory data
+- ML model outputs
+
+## Data Quality
+
+### Tests
+
+- **Uniqueness**: Primary key constraints
+- **Not Null**: Required field validation
+- **Referential Integrity**: Foreign key relationships
+- **Data Freshness**: Recency checks
+- **Custom Tests**: Business logic validation
+
+### Macros
+
+Reusable functions for:
+- Data quality checks
+- Feature engineering
+- Metric calculations
+- Date/time utilities
 
 ## Usage
 
-### Setup
-
-1. Configure `profiles.yml` with your database credentials
-2. Install dbt dependencies:
-   ```bash
-   dbt deps
-   ```
-
-### Run Models
+### Development
 
 ```bash
-# Run all models
+# Install dependencies
+dbt deps
+
+# Run models
 dbt run
 
-# Run specific model
-dbt run --select stg_events
-
-# Run models in staging
-dbt run --select staging
-
-# Run models in marts
-dbt run --select marts
-```
-
-### Run Tests
-
-```bash
-# Run all tests
+# Test data quality
 dbt test
 
-# Test specific model
-dbt test --select stg_events
-```
-
-### Generate Documentation
-
-```bash
+# Generate documentation
 dbt docs generate
 dbt docs serve
 ```
 
-## Data Quality
+### Production Deployment
 
-All models include:
-- Schema tests (unique, not_null, accepted_values)
-- Data freshness tests
-- Custom SQL tests
-- Documentation
+```bash
+# Full refresh
+dbt run --full-refresh
+
+# Incremental updates
+dbt run --models +fact_events
+
+# Specific model selection
+dbt run --select marts.metrics
+```
 
 ## Dependencies
 
-- dbt-core >= 1.7.0
-- dbt-postgres (for local development)
-- dbt-athena-community (for AWS Athena)
+- dbt-core
+- dbt-postgres (development)
+- dbt-athena-community (production)
 
+## Model Lineage
+
+```
+sources → staging → marts → metrics
+   ↓         ↓        ↓        ↓
+raw data → clean → business → KPIs
+```
+
+## Incremental Strategy
+
+- **Events**: Append new records based on event timestamp
+- **Dimensions**: Type 2 slowly changing dimensions
+- **Metrics**: Daily aggregation with historical preservation
+
+## Performance Optimization
+
+- Partitioning by date for large fact tables
+- Clustering on frequently filtered columns
+- Materialization strategy optimization
+- Query performance monitoring

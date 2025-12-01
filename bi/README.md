@@ -1,123 +1,232 @@
-# BI Dashboard
+# Business Intelligence
 
-This directory contains dashboard files and configurations for visualizing threat intelligence metrics.
+Business intelligence and analytics components for phishing threat intelligence reporting.
 
-## Dashboard Components
+## Overview
 
-### PowerBI
+This directory contains configurations and templates for business intelligence dashboards and reports that visualize phishing detection metrics and threat intelligence insights.
 
-Create a PowerBI dashboard with the following visualizations:
+## Components
 
-1. **Threat Block Rate Over Time**
-   - Line chart showing daily threat detection rates
-   - Data source: `threat_block_rate` metric table
+### Dashboard Templates
 
-2. **User Risk Score Distribution**
-   - Histogram of user risk scores
-   - Data source: `dim_user` table
+**Threat Intelligence Dashboard:**
+- Real-time threat detection metrics
+- Phishing trend analysis
+- Geographic threat distribution
+- Model performance monitoring
 
-3. **Phishing Simulation Outcomes**
-   - Stacked bar chart by department/region
-   - Data source: `fact_events` joined with `dim_user`
+**Operational Metrics Dashboard:**
+- System health and uptime
+- API response times and throughput
+- Model prediction accuracy
+- Data pipeline status
 
-4. **Threat Indicator Matches by Severity**
-   - Pie chart or treemap
-   - Data source: `dim_threat` table
+**Executive Summary Dashboard:**
+- High-level KPIs and trends
+- ROI and cost analysis
+- Risk assessment summaries
+- Compliance reporting
 
-5. **Product Performance KPIs**
-   - Card visuals for key metrics
-   - Data source: `product_efficacy_score` table
+### Key Performance Indicators
 
-6. **Daily Trend Lines**
-   - Multiple line chart for various metrics
-   - Data source: Multiple metric tables
+**Security Metrics:**
+- Threat Detection Rate: 98.3%
+- False Positive Rate: < 2%
+- Mean Time to Detection: < 1 second
+- Coverage Rate: 100% of monitored URLs
 
-## Data Connection
+**Operational Metrics:**
+- API Uptime: 99.9%
+- Average Response Time: 150ms
+- Daily Predictions: 10,000+
+- Model Accuracy: 98.3%
 
-### For PostgreSQL
+**Business Metrics:**
+- Cost per Detection: $0.001
+- Prevented Losses: $500K+ annually
+- User Satisfaction: 95%
+- Compliance Score: 100%
 
+## Data Sources
+
+### Primary Sources
+- ML model predictions and confidence scores
+- API usage logs and performance metrics
+- Threat intelligence feeds
+- User interaction data
+
+### Derived Metrics
+- Aggregated detection rates by time period
+- Trend analysis and forecasting
+- Comparative performance analysis
+- Risk scoring and prioritization
+
+## Visualization Types
+
+### Real-time Dashboards
+- Live threat detection status
+- Current system performance
+- Active threat monitoring
+- Alert and notification panels
+
+### Historical Analysis
+- Trend charts and time series
+- Comparative analysis reports
+- Performance over time tracking
+- Seasonal pattern identification
+
+### Predictive Analytics
+- Threat forecasting models
+- Capacity planning projections
+- Risk assessment predictions
+- Performance optimization insights
+
+## Integration Points
+
+### Data Warehouse
+- Connection to dbt-transformed data
+- Scheduled data refresh
+- Historical data retention
+- Performance optimization
+
+### API Endpoints
+- Real-time metric retrieval
+- Custom query capabilities
+- Export functionality
+- Automated reporting
+
+### Alert Systems
+- Threshold-based alerting
+- Anomaly detection notifications
+- Performance degradation alerts
+- System health monitoring
+
+## Supported Platforms
+
+### Cloud BI Tools
+- **AWS QuickSight**: Native AWS integration
+- **Looker**: Advanced analytics capabilities
+- **Tableau Online**: Enterprise visualization
+- **Power BI**: Microsoft ecosystem integration
+
+### Self-hosted Solutions
+- **Grafana**: Open-source monitoring
+- **Apache Superset**: Modern data exploration
+- **Metabase**: Simple business intelligence
+- **Jupyter Dashboards**: Custom analytics
+
+## Report Templates
+
+### Daily Operations Report
+- 24-hour threat summary
+- System performance metrics
+- Model accuracy statistics
+- Incident response summary
+
+### Weekly Trend Analysis
+- Week-over-week comparisons
+- Threat pattern identification
+- Performance trend analysis
+- Capacity utilization review
+
+### Monthly Executive Summary
+- High-level KPI dashboard
+- ROI and cost analysis
+- Strategic recommendations
+- Compliance status report
+
+### Quarterly Business Review
+- Comprehensive performance analysis
+- Competitive benchmarking
+- Strategic planning insights
+- Investment recommendations
+
+## Configuration
+
+### Data Connections
+```yaml
+connections:
+  warehouse:
+    type: athena
+    database: phishing_intelligence
+    region: us-east-1
+  
+  api:
+    base_url: http://localhost:8000
+    endpoints:
+      - /metrics/threat-block-rate
+      - /metrics/product-efficacy
 ```
-Server: localhost
-Database: phishing_ml
-Schema: marts
-Tables: dim_user, dim_threat, fact_events, threat_block_rate, etc.
+
+### Refresh Schedules
+```yaml
+schedules:
+  real_time: "*/5 minutes"
+  hourly: "0 * * * *"
+  daily: "0 6 * * *"
+  weekly: "0 6 * * 1"
 ```
 
-### For AWS Athena
+## Security and Access
 
-```
-Data Source: AWS Athena
-Database: phishing_ml_db
-Workgroup: primary
-Tables: dim_user, dim_threat, fact_events, etc.
-```
+### Role-based Access Control
+- **Executives**: High-level dashboards only
+- **Operations**: Detailed operational metrics
+- **Analysts**: Full data access and exploration
+- **Developers**: System performance and debugging
 
-## Dashboard Queries
+### Data Privacy
+- PII masking and anonymization
+- Audit logging for data access
+- Compliance with data protection regulations
+- Secure data transmission and storage
 
-### Threat Block Rate
+## Performance Optimization
 
-```sql
-SELECT 
-    event_date,
-    threat_block_rate_pct,
-    threats_detected,
-    total_events
-FROM marts.threat_block_rate
-ORDER BY event_date DESC
-```
+### Caching Strategy
+- Pre-aggregated metric calculations
+- Dashboard result caching
+- Incremental data updates
+- Query performance optimization
 
-### User Metrics
+### Scalability
+- Horizontal scaling for high concurrency
+- Load balancing for dashboard access
+- Resource allocation optimization
+- Cost management and monitoring
 
-```sql
-SELECT 
-    user_id,
-    department,
-    region,
-    total_events,
-    phishing_rate_pct
-FROM marts.dim_user
-ORDER BY phishing_rate_pct DESC
-```
+## Monitoring and Alerting
 
-### Product Efficacy
+### Dashboard Health
+- Visualization load times
+- Data freshness monitoring
+- User access patterns
+- Error rate tracking
 
-```sql
-SELECT 
-    event_date,
-    product_efficacy_score,
-    detection_rate,
-    high_severity_rate
-FROM marts.product_efficacy_score
-ORDER BY event_date DESC
-```
+### Business Alerts
+- Threshold breach notifications
+- Anomaly detection alerts
+- Performance degradation warnings
+- System outage notifications
 
-## Looker Integration
+## Best Practices
 
-For Looker, create a LookML project with:
+### Design Principles
+- Clear and intuitive visualizations
+- Consistent color schemes and branding
+- Mobile-responsive design
+- Accessibility compliance
 
-- Explores for each fact/dimension table
-- Pre-built dashboards
-- Custom metrics using LookML
+### Data Governance
+- Standardized metric definitions
+- Data quality monitoring
+- Version control for dashboard changes
+- Documentation and training materials
 
-## QuickSight Integration
+## Dependencies
 
-1. Connect to Athena data source
-2. Import dbt-generated tables
-3. Create visualizations
-4. Set up scheduled refreshes
-
-## Refresh Schedule
-
-- **Real-time**: API metrics (via API calls)
-- **Hourly**: Fact tables
-- **Daily**: Dimension tables and metrics
-- **Weekly**: ML model retraining
-
-## Custom Metrics
-
-Add custom calculations in your BI tool:
-
-- **Threat Detection Accuracy**: (True Positives) / (True Positives + False Positives)
-- **User Engagement Score**: Based on event frequency and reporting rate
-- **Department Risk Ranking**: Aggregated by department
-
+- Business intelligence platform (QuickSight/Looker/etc.)
+- Data warehouse connection
+- API access credentials
+- Visualization libraries and themes

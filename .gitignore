@@ -1,27 +1,36 @@
+# Dashboard (local use only)
+dashboard.html
+*.png
+project_summary.txt
+test_request.json
+test_sample.csv
+
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
 venv/
 env/
 ENV/
-.venv
-
-# dbt
-target/
-dbt_packages/
-profiles.yml
-
-# ML
-ml/models/*.pkl
-ml/models/*.json
-ml/predictions/
-ml/evaluation/
-
-# Ingestion
-ingestion/output/
 
 # IDE
 .vscode/
@@ -35,23 +44,23 @@ Thumbs.db
 
 # Logs
 *.log
-logs/
 
-# Environment
+# Model files (too large for git)
+ml/models/
+ml/predictions/
+
+# Environment variables
 .env
 .env.local
 
-# Jupyter
-.ipynb_checkpoints/
-*.ipynb
+# Database
+*.db
+*.sqlite3
 
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
+# AWS credentials
+.aws/
+credentials
 
-# Docker
-*.pid
-*.seed
-*.pid.lock
-
+# Temporary files
+*.tmp
+*.temp

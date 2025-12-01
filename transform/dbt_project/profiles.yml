@@ -1,0 +1,22 @@
+phishing_ml:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      user: postgres
+      password: postgres
+      port: 5432
+      dbname: phishing_ml
+      schema: public
+      threads: 4
+    
+    prod:
+      type: athena
+      s3_staging_dir: s3://org-product-logs/dbt-staging/
+      region_name: us-east-1
+      schema: phishing_ml
+      database: phishing_ml_db
+      work_group: primary
+      threads: 4
+
