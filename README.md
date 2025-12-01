@@ -71,6 +71,4 @@ phishing-ml/
 - Comprehensive data quality tests
 - Automated pipeline orchestration
 
-## License
 
-MIT License
