@@ -128,8 +128,5 @@ docker run -p 8000:8000 phishing-api
 - Threat intelligence metrics and reporting
 - Docker containerization support
 
-## Contributing
-
-Contributions are welcome. Please ensure all tests pass and follow the existing code style.
 
 
