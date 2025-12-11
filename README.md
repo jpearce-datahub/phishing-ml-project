@@ -68,47 +68,6 @@ phishing-ml/
 - `GET /metrics/user/{user_id}` - User-specific metrics
 - `GET /model/info` - Model information and feature importance
 
-## Installation
-
-1. Clone the repository
-2. Install dependencies: `pip install -r requirements.txt`
-3. Train the model: `python ml/train.py`
-4. Start the API: `python api/app.py`
-
-## Usage
-
-### Training a Model
-
-```bash
-cd ml
-python train.py
-```
-
-### Running Inference
-
-```bash
-cd ml
-python inference.py input_file.csv output_file.csv
-```
-
-### Starting the API
-
-```bash
-cd api
-python app.py
-```
-
-The API will be available at `http://localhost:8000`
-
-## Docker Support
-
-Build and run the API container:
-
-```bash
-cd api
-docker build -t phishing-api .
-docker run -p 8000:8000 phishing-api
-```
 
 ## Technologies
 
